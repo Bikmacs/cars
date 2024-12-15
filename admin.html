@@ -1,0 +1,83 @@
+<?php
+include 'connect.php';
+
+// Проверка, что пользователь вошел как администратор
+session_start();
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'admin') {
+    header('Location: index.php');
+    exit;
+}
+
+// Получение данных из таблицы users
+$query_users = "SELECT * FROM users";
+$result_users = $conn->query($query_users);
+
+// Получение данных из таблицы cars
+$query_cars = "SELECT * FROM cars";
+$result_cars = $conn->query($query_cars);
+?>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        Панель администратора
+    </div>
+    <div class="container">
+        <h2>Пользователи</h2>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Email</th>
+            </tr>
+            <?php
+            if ($result_users->num_rows > 0) {
+                while ($row = $result_users->fetch_assoc()) {
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($row['id']) . '</td>';
+                    echo '<td>' . htmlspecialchars($row['name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($row['email']) . '</td>';
+                    echo '</tr>';
+                }
+            } else {
+                echo '<tr><td colspan="3">Нет пользователей.</td></tr>';
+            }
+            ?>
+        </table>
+
+        <h2>Автомобили</h2>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Цена</th>
+            </tr>
+            <?php
+            if ($result_cars->num_rows > 0) {
+                while ($row = $result_cars->fetch_assoc()) {
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($row['id']) . '</td>';
+                    echo '<td>' . htmlspecialchars($row['name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($row['description']) . '</td>';
+                    echo '<td>' . htmlspecialchars($row['money']) . '</td>';
+                    echo '</tr>';
+                }
+            } else {
+                echo '<tr><td colspan="4">Нет автомобилей.</td></tr>';
+            }
+            ?>
+        </table>
+    </div>
+    <div class="add-button-container">
+        <button class="add-button" onclick="window.location.href='2.php'">Назад</button>
+    </div>
+</body>
+</html>
